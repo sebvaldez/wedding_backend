@@ -1,0 +1,159 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: "Wedding Backend API"
+  description: "API for managing wedding members, photos, and notifications."
+paths:
+  /wedding/members:
+    post:
+      summary: "Create a member"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Member'
+      responses:
+        '201':
+          description: "Member created successfully"
+        '400':
+          description: "Invalid input"
+  
+    put:
+      summary: "Bulk create members"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Member'
+      responses:
+        '201':
+          description: "Members created successfully"
+        '400':
+          description: "Invalid input"
+  
+  /wedding/members/{id}:
+    get:
+      summary: "Get member by familyID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "ID of member to retrieve"
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        '404':
+          description: "Member not found"
+
+  /wedding/members/email/{email}:
+    get:
+      summary: "Get member by email"
+      parameters:
+        - name: "email"
+          in: "path"
+          required: true
+          description: "Email of member to retrieve"
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        '404':
+          description: "Member not found"
+
+  /wedding/photos:
+    post:
+      summary: "Upload bulk photos"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: "object"
+              properties:
+                photos:
+                  type: "array"
+                  items:
+                    type: "string"
+                    format: "binary"
+      responses:
+        '201':
+          description: "Photos uploaded successfully"
+        '400':
+          description: "Invalid input"
+  
+    get:
+      summary: "Get photos"
+      responses:
+        '200':
+          description: "Successful operation"
+  
+  /wedding/notifications:
+    post:
+      summary: "Send notifications (text or email)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      responses:
+        '200':
+          description: "Notification sent successfully"
+        '400':
+          description: "Invalid input"
+
+components:
+  schemas:
+    Member:
+      type: "object"
+      properties:
+        groupID:
+          type: "string"
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+        email:
+          type: "string"
+        phoneNumber:
+          type: "string"
+        checkIn:
+          type: "boolean"
+        plannedTransportation:
+          type: "string"
+          enum: ["Renting a Car", "Uber or Lyft", "Carpooling"]
+        dinnerSelection:
+          type: "string"
+          enum: ["Vegetable Polenta Torte", "Chicken Saltimcbocca", "Kid's Buffet"]
+        specialSippingPreference:
+          type: "string"
+          enum: ["Red Wine", "White Wine", "Rose", "Pilsner/Lager", "IPA", "Specialty Cocktails", "Mocktails", "Soda/Lemonade"]
+        emailedInvitation:
+          type: "boolean"
+
+    Notification:
+      type: "object"
+      properties:
+        memberID:
+          type: "string"
+        type:
+          type: "string"
+          enum: ["text", "email"]
+        message:
+          type: "string"
+
