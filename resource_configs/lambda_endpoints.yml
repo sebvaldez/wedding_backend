@@ -1,0 +1,34 @@
+# ServerlessFramework Syntax
+
+# Authorizer Lambda
+# ....
+
+# Test hello world lambda
+hello:
+  description: >-
+    Hello world , make sure fancy organization works
+    make sure aws provider works
+  handler: functions/test/handler.hello
+  events:
+    - http:
+        path: /hello
+        method: get
+        cors: true
+
+textMessage:
+  description: >-
+    Uses nodeModuleLayer for Twillio API
+    Parses input and send text message
+  timeout: 10
+  handler: functions/text/handlerTwo.textMessage
+  layers:
+    - !Ref NodeModulesLambdaLayer
+  environment:
+    TWILLIO_ACCOUNT_NUMBER: ${ssm(${self:provider.region}):twillio-account-number}
+    TWILLIO_ACCOUNT_SID:    ${ssm(${self:provider.region}):twillio-account-sid}
+    TWILLIO_AUTH_TOKEN:     ${ssm(${self:provider.region}):twillio-auth-token}
+  events:
+    - http:
+        path: /text
+        method: post
+        cors: true

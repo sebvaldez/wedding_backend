@@ -1,0 +1,41 @@
+app: wedding-backend
+frameworkVersion: "3"
+
+org: sebdev
+
+service: wedding-backend
+
+params:
+  dev:
+    profile: sebs-aws
+    developer_email: valdez.sebastian4@gmail.com
+
+package:
+  patterns:
+    ${file(resource_configs/package_exclusion_list.yml)}
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-west-2'}
+  tags:
+    project: ${self:service}
+    environment: ${self:provider.stage}
+    region: ${self:provider.region}
+    runtime: ${self:provider.runtime}
+
+layers:
+  nodeModules:
+    compatibleRuntimes:
+      - nodejs18.x
+    path: layers
+    description: NPM modules that lambda functions will use
+    retain: false # false is default, just adding for documentation
+
+functions:
+  # REST Lambda definitions
+  - ${file(resource_configs/lambda_endpoints.yml)}
+
+# CloudFront definitions
+resources:
