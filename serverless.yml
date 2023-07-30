@@ -11,14 +11,18 @@ params:
     developer_email: valdez.sebastian4@gmail.com
 
 package:
-  patterns:
-    ${file(resource_configs/package_exclusion_list.yml)}
+  individually: true # package each function individually
+  patterns: ${file(resource_configs/package_exclusion_list.yml)}
 
 provider:
   name: aws
   runtime: nodejs18.x
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-west-2'}
+  deploymentMethod: direct # default in v4 - https://www.serverless.com/framework/docs/providers/aws/guide/deploying
+  environment:
+    MEMBER_TABLE: ${self:service}-${self:opt.stage, self:provider.stage, 'dev'}-member-table
+    MEMBER_TABLE_GSI_1: ${self:service}-${self:opt.stage, self:provider.stage, 'dev'}-member-table-GSI-1
   tags:
     project: ${self:service}
     environment: ${self:provider.stage}
@@ -26,16 +30,32 @@ provider:
     runtime: ${self:provider.runtime}
 
 layers:
-  nodeModules:
+  twilio:
     compatibleRuntimes:
       - nodejs18.x
-    path: layers
-    description: NPM modules that lambda functions will use
+    path: layers/twilio
+    description: NPM Twillio package for texting
+    retain: false # false is default, just adding for documentation
+  uuid:
+    compatibleRuntimes:
+      - nodejs18.x
+    path: layers/uuid
+    description: NPM UUID for generating v4 uuids
+    retain: false # false is default, just adding for documentation
+  services:
+    compatibleRuntimes:
+      - nodejs18.x
+    path: layers/services
+    description: Custom defined services
     retain: false # false is default, just adding for documentation
 
 functions:
   # REST Lambda definitions
   - ${file(resource_configs/lambda_endpoints.yml)}
+  - ${file(resource_configs/lambda_member_endpoints.yml)}
 
 # CloudFront definitions
 resources:
+  - ${file(resource_configs/iam_roles.yml)}
+  - ${file(resource_configs/iam_policies.yml)}
+  - ${file(resource_configs/dynamo_db_member_table.yml)}

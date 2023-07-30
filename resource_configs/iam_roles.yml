@@ -1,2 +1,79 @@
 # CloudFormation Syntax
 Resources:
+  CreateMemberRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CreateMemberRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  CreateBulkMembersRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CreateBulkMembersRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  DeleteMemberRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: DeleteMemberRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  FetchMemberRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FetchMemberRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  UpdateMemberRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: UpdateMemberRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  textMessageRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: textMessageRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole

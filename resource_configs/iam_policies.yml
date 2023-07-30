@@ -1,2 +1,54 @@
 # CloudFormation Syntax
 Resources:
+  LoggingPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: LoggingPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource:
+              - arn:aws:logs:${self:provider.region}:${aws:accountId}:log-group:/aws/lambda/*:*:*
+      Roles:
+        - Ref: CreateMemberRole
+        - Ref: CreateBulkMembersRole
+        - Ref: DeleteMemberRole
+        - Ref: FetchMemberRole
+        - Ref: UpdateMemberRole
+        - Ref: textMessageRole
+
+  # todo - refactor MemberTable policy out for principle of least priv
+  MemberTableCrudPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: MemberTableCrudPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:UpdateItem
+              - dynamodb:TransactGetItems
+              - dynamodb:TransactWriteItems
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
+            Resource:
+              - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${self:provider.environment.MEMBER_TABLE}
+              - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${self:provider.environment.MEMBER_TABLE}/index/${self:provider.environment.MEMBER_TABLE_GSI_1}
+      Roles:
+        - Ref: CreateMemberRole
+        - Ref: CreateBulkMembersRole
+        - Ref: DeleteMemberRole
+        - Ref: FetchMemberRole
+        - Ref: UpdateMemberRole
+        - Ref: textMessageRole

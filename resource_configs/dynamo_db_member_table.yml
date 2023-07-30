@@ -1,0 +1,32 @@
+# CloudFormation Syntax
+Resources:
+  MemberTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete # going to be false while in dev, Retain for Prod
+    # UpdateReplacePolicy: Retain # going to be false while in dev
+    Properties:
+      TableName: ${self:provider.environment.MEMBER_TABLE}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: ${self:provider.environment.MEMBER_TABLE_GSI_1}
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL

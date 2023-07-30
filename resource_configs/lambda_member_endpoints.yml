@@ -1,0 +1,99 @@
+# ServerlessFramework Syntax
+
+CreateMember:
+  description: >-
+    Create a memeber
+  handler: functions/createMember.call
+  layers:
+    - !Ref UuidLambdaLayer
+    - !Ref ServicesLambdaLayer
+  role: CreateMemberRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  events:
+    - http:
+        path: /wedding/members
+        method: post
+        cors: true
+        # authorization: eventually
+
+CreateBulkMembers:
+  description: >-
+    Create memebers in bulk
+  handler: functions/createBulkMembers.call
+  layers:
+    - !Ref UuidLambdaLayer
+    - !Ref ServicesLambdaLayer
+  role: CreateBulkMembersRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  events:
+    - http:
+        path: /wedding/members/bulk
+        method: post
+        cors: true
+        # authorization: eventually
+
+DeleteMember:
+  description: >-
+    Delete a member by Member ID
+  handler: functions/deleteMember.call
+  role: DeleteMemberRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  layers:
+    - !Ref UuidLambdaLayer
+    - !Ref ServicesLambdaLayer
+  events:
+    - http:
+        path: /wedding/members/{memberId}
+        method: delete
+        request:
+          parameters:
+            paths:
+              memberId: true
+        cors: true
+        # authorization: eventually
+
+FetchMember:
+  description: >-
+    Fetch member by ID || Email
+  handler: functions/fetchMember.call
+  role: FetchMemberRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  layers:
+    - !Ref UuidLambdaLayer
+    - !Ref ServicesLambdaLayer
+  events:
+    - http:
+        path: /wedding/members
+        method: get
+        request:
+          parameters:
+            querystrings:
+              id: false
+              email: false
+        cors: true
+        # authorization: eventually
+
+UpdateMember:
+  description: >-
+    Update member
+  handler: functions/updateMember.call
+  layers:
+    - !Ref UuidLambdaLayer
+    - !Ref ServicesLambdaLayer
+  role: UpdateMemberRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  events:
+    - http:
+        path: /wedding/members/{memberId}
+        method: patch
+        cors: true
+        request:
+          parameters:
+            paths:
+              memberId: true
+        # authorization: eventually
