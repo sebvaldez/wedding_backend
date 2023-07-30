@@ -97,3 +97,20 @@ UpdateMember:
             paths:
               memberId: true
         # authorization: eventually
+
+UpdateBulkMembers:
+  description: >-
+    Update members in bulk
+  handler: functions/updateBulkMembers.call
+  layers:
+    - !Ref UuidLambdaLayer
+    - !Ref ServicesLambdaLayer
+  role: UpdateBulkMembersRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  events:
+    - http:
+        path: /wedding/members/bulk
+        method: patch
+        cors: true
+        # authorization: eventually
