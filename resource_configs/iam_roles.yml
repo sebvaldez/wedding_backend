@@ -65,6 +65,32 @@ Resources:
                 - lambda.amazonaws.com
             Action: sts:AssumeRole
 
+  UpdateBulkMembersRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: UpdateBulkMembersRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  CreateGroupRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CreateGroupRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+
   textMessageRole:
     Type: AWS::IAM::Role
     Properties:

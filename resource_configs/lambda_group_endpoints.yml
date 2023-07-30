@@ -1,0 +1,17 @@
+# ServerlessFramework Syntax
+
+CreateGroup:
+  description: Create a new group
+  handler: functions/createGroup.call
+  layers:
+    - !Ref UuidLambdaLayer
+    - !Ref ServicesLambdaLayer
+  role: CreateGroupRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  events:
+    - http:
+        path: /wedding/groups
+        method: post
+        cors: true
+        # authorization: eventually

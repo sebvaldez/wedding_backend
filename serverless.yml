@@ -53,6 +53,7 @@ functions:
   # REST Lambda definitions
   - ${file(resource_configs/lambda_endpoints.yml)}
   - ${file(resource_configs/lambda_member_endpoints.yml)}
+  - ${file(resource_configs/lambda_group_endpoints.yml)}
 
 # CloudFront definitions
 resources:

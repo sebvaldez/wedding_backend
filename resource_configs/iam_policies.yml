@@ -20,6 +20,8 @@ Resources:
         - Ref: DeleteMemberRole
         - Ref: FetchMemberRole
         - Ref: UpdateMemberRole
+        - Ref: UpdateBulkMembersRole
+        - Ref: CreateGroupRole
         - Ref: textMessageRole
 
   # todo - refactor MemberTable policy out for principle of least priv
@@ -51,4 +53,6 @@ Resources:
         - Ref: DeleteMemberRole
         - Ref: FetchMemberRole
         - Ref: UpdateMemberRole
+        - Ref: UpdateBulkMembersRole
+        - Ref: CreateGroupRole
         - Ref: textMessageRole
