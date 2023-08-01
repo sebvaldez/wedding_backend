@@ -3,6 +3,10 @@ const AWS = require('aws-sdk');
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
+// Constants
+const MEMBER_PREFIX = "MEMBER#";
+const GROUP_PREFIX = "GROUP#";
+
 class MemberService {
   constructor(tableName, gsiName) {
     this.tableName = tableName;
@@ -11,14 +15,17 @@ class MemberService {
 
   async createMember(member) {
     const memberId = uuidv4();
+    const timestamp = new Date().toISOString();
 
     const putParams = {
       TableName: this.tableName,
       Item: {
         PK: `MEMBER#${memberId}`,
-        SK: `GROUP#${member.group_id || 'NO_GROUP'}`,
+        SK: `GROUP#${member.groupId || 'NO_GROUP'}`,
         GSI1PK: `EMAIL#${member.email}`,
         GSI1SK: `MEMBER#${memberId}`,
+        createdAt: timestamp,
+        updatedAt: timestamp,
         ...member
       }
     };
@@ -36,6 +43,8 @@ class MemberService {
         throw new Error('Input should be a non-empty array of members.');
     }
 
+    const timestamp = new Date().toISOString();
+
     // Prepare the items for batch write
     const items = members.map(member => {
         const memberId = uuidv4();
@@ -43,9 +52,11 @@ class MemberService {
             PutRequest: {
                 Item: {
                     PK: `MEMBER#${memberId}`,
-                    SK: `GROUP#${member.group_id || 'NO_GROUP'}`,
+                    SK: `GROUP#${member.groupId || 'NO_GROUP'}`,
                     GSI1PK: `EMAIL#${member.email}`,
                     GSI1SK: `MEMBER#${memberId}`,
+                    createdAt: timestamp,
+                    updatedAt: timestamp,
                     ...member
                 }
             }
@@ -103,7 +114,11 @@ class MemberService {
 
   async fetchAll() {
     const scanParams = {
-        TableName: this.tableName
+        TableName: this.tableName,
+        FilterExpression: "begins_with(PK, :pkValue)",
+        ExpressionAttributeValues: {
+            ":pkValue": "MEMBER#"
+        }
     };
 
     try {
@@ -128,53 +143,119 @@ class MemberService {
   }
 
   async updateMember(memberId, updates) {
+    this.validateUpdateParams(memberId, updates);
+
+    const fetchedMember = await this.fetchMember(memberId);
+    const newGroupId = updates.groupId;
+    delete updates.groupId;  // Remove groupId from updates
+
+    if (newGroupId && fetchedMember.SK !== `${GROUP_PREFIX}${newGroupId}`) {
+        return await this.handleSKChange(memberId, fetchedMember, newGroupId, updates);
+    } else {
+        return await this.performRegularUpdate(memberId, fetchedMember.SK, updates);
+    }
+  }
+
+  async updateMemberInBulk(memberUpdates) {
+    // Implementation here
+  }
+
+  async fetchMember(memberId) {
+    const currentMember = await this.getMemberByMemberId(memberId);
+    if (!currentMember || !currentMember[0]) {
+        throw new Error('Member not found.');
+    }
+    return currentMember[0];
+  }
+
+  async handleSKChange(memberId, fetchedMember, newGroupId, updates) {
+    const deleteParams = this.getDeleteParams(memberId, fetchedMember.SK);
+    const putParams = this.getPutParams(fetchedMember, `${GROUP_PREFIX}${newGroupId}`, updates);
+    const transactParams = {
+        TransactItems: [
+            { Delete: deleteParams },
+            { Put: putParams }
+        ]
+    };
+
+    try {
+        await dynamoDB.transactWrite(transactParams).promise();
+        return putParams.Item;
+    } catch (err) {
+        console.error('Error in handleSKChange:', err);
+        throw err;
+    }
+  }
+
+  async performRegularUpdate(memberId, currentSK, updates) {
+    const updateParams = this.getUpdateParams(memberId, currentSK, updates);
+    try {
+        const result = await dynamoDB.update(updateParams).promise();
+        return result.Attributes;
+    } catch (err) {
+        console.error('Error in performRegularUpdate:', err);
+        throw err;
+    }
+  }
+
+  // Helper for MemberService
+  validateUpdateParams(memberId, updates) {
     if (!memberId || !updates || Object.keys(updates).length === 0) {
         throw new Error('Both memberId and updates are required.');
     }
-
     // Remove attributes that should not be updated
-    delete updates.PK;
-    delete updates.SK;
-    delete updates.ID;
-    delete updates.GSI1PK;
-    delete updates.GSI1SK;
+    const nonUpdatableAttributes = ['PK', 'SK', 'id', 'GSI1PK', 'GSI1SK', 'createdAt', 'updatedAt'];
+    nonUpdatableAttributes.forEach(attr => delete updates[attr]);
+  }
 
+  getUpdateParams(memberId, currentSK, updates) {
     const updateExpressions = [];
     const expressionAttributeValues = {};
     const expressionAttributeNames = {};
 
-    // Constructing the update expressions and attribute values
     for (const [key, value] of Object.entries(updates)) {
         updateExpressions.push(`#${key} = :${key}`);
         expressionAttributeValues[`:${key}`] = value;
         expressionAttributeNames[`#${key}`] = key;
     }
 
-    const updateParams = {
+    updateExpressions.push('#updatedAt = :updatedAt');
+    expressionAttributeValues[':updatedAt'] = new Date().toISOString();
+    expressionAttributeNames['#updatedAt'] = 'updatedAt';
+
+    return {
         TableName: this.tableName,
         Key: {
-            PK: `MEMBER#${memberId}`,
-            // Assuming you have a sort key, but if not, remove this line
-            SK: `GROUP#${updates.group_id || 'NO_GROUP'}`
+            PK: `${MEMBER_PREFIX}${memberId}`,
+            SK: currentSK
         },
         UpdateExpression: `SET ${updateExpressions.join(', ')}`,
         ExpressionAttributeValues: expressionAttributeValues,
         ExpressionAttributeNames: expressionAttributeNames,
-        ReturnValues: 'ALL_NEW'  // Returns the updated item
+        ReturnValues: 'ALL_NEW'
     };
-
-    try {
-        const result = await dynamoDB.update(updateParams).promise();
-        return result.Attributes;
-    } catch (err) {
-        console.error('Error in updateMember method:', err);
-        throw err;
-    }
   }
 
+  getDeleteParams(memberId, currentSK) {
+    return {
+        TableName: this.tableName,
+        Key: {
+            PK: `${MEMBER_PREFIX}${memberId}`,
+            SK: currentSK
+        }
+    };
+  }
 
-  async updateMemberInBulk(memberUpdates) {
-    // Implementation here
+  getPutParams(fetchedMember, newSK, updates) {
+      return {
+          TableName: this.tableName,
+          Item: {
+              ...fetchedMember,
+              SK: newSK,
+              ...updates,
+              updatedAt: new Date().toISOString()
+          }
+      };
   }
 
   // Private method
