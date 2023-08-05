@@ -5,6 +5,7 @@ jspm_packages
 # Serverless directories
 .vscode
 .serverless
+work_in_progress.md
 *.zip
 .txt
 .DS_Store
