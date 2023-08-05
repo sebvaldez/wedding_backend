@@ -26,6 +26,9 @@ module.exports.call = async (event, context, callback) => {
 
     const member = members[0];
     const email = member.email;
+    const firstName = member.firstName;
+    const lastName = member.lastName;
+    const groupId = member.groupId;
 
     if (!email) {
       return {
@@ -35,6 +38,11 @@ module.exports.call = async (event, context, callback) => {
     }
 
     const htmlTemplate = fs.readFileSync('/opt/nodejs/email_template.html', 'utf8');
+
+    // Interpolate the member's information into the HTML template
+    const personalizedHtmlTemplate = htmlTemplate
+      .replace('[Recipient\'s Name]', `${firstName} ${lastName}`)
+      .replace('[RSVP Link]', `https://allegrasebwedding.com/rsvp?email=${email}${groupId ? `&groupId=${groupId}` : ''}`);
 
     const emailParams = {
       Destination: {
@@ -46,7 +54,7 @@ module.exports.call = async (event, context, callback) => {
         },
         Body: {
           Html: {
-            Data: htmlTemplate
+            Data: personalizedHtmlTemplate
           }
         }
       },
