@@ -23,6 +23,7 @@ Resources:
         - Ref: UpdateBulkMembersRole
         - Ref: CreateGroupRole
         - Ref: textMessageRole
+        - Ref: emailMessageRole
 
   # todo - refactor MemberTable policy out for principle of least priv
   MemberTableCrudPolicy:
@@ -56,3 +57,19 @@ Resources:
         - Ref: UpdateBulkMembersRole
         - Ref: CreateGroupRole
         - Ref: textMessageRole
+        - Ref: emailMessageRole
+
+  SESPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: SESPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ses:SendEmail
+              - ses:SendRawEmail
+            Resource: "*"
+      Roles:
+        - Ref: emailMessageRole

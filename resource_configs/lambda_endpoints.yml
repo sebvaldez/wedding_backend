@@ -3,6 +3,30 @@
 # Authorizer Lambda
 # ....
 
+emailMessage:
+  description: >-
+    Uses AWS SES to send out a email to the member.
+    Email body should be a MJML template.
+  handler: functions/emailMessage.call
+  layers:
+    - !Ref CommonLambdaLayer
+    - !Ref CoreServicesLambdaLayer
+    - !Ref UuidLambdaLayer
+  role: emailMessageRole
+  environment:
+    REGION: ${self:provider.region}
+    SENDER_EMAIL: "valdez.sebastian4@gmail.com"
+  events:
+    - http:
+        path: /sendInvitation/{memberId}
+        method: post
+        request:
+          parameters:
+            paths:
+              memberId: true
+        cors: true
+        # authorization: eventually
+
 textMessage:
   description: >-
     Uses nodeModuleLayer for Twillio API
@@ -12,7 +36,7 @@ textMessage:
   layers:
     - !Ref TwilioLambdaLayer
     - !Ref UuidLambdaLayer
-    - !Ref ServicesLambdaLayer
+    - !Ref CoreServicesLambdaLayer
   role: textMessageRole
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}

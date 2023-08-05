@@ -103,3 +103,16 @@ Resources:
               Service:
                 - lambda.amazonaws.com
             Action: sts:AssumeRole
+
+  emailMessageRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: emailMessageRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
