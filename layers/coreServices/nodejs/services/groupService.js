@@ -8,6 +8,23 @@ class GroupService {
     constructor(tableName) {
         this.tableName = tableName;
     }
+    async validGroup(groupId) {
+        const params = {
+            TableName: this.tableName,
+            Key: {
+                PK: `GROUP#${groupId}`,
+                SK: `GROUP#${groupId}`
+            }
+        };
+
+        try {
+            const result = await dynamoDB.get(params).promise();
+            return !!result.Item;  // Returns true if the group exists, false otherwise
+        } catch (err) {
+            console.error('Error in validGroup method:', err);
+            throw err;
+        }
+    }
 
     async createGroup(groupData) {
         const groupId = uuidv4();
@@ -45,6 +62,50 @@ class GroupService {
             return result.Items;
         } catch (err) {
             console.error('Error in listGroups method:', err);
+            throw err;
+        }
+    }
+
+    async incrementGroupSize(groupId) {
+        const params = {
+            TableName: this.tableName,
+            Key: {
+                PK: `GROUP#${groupId}`,
+                SK: `GROUP#${groupId}`
+            },
+            UpdateExpression: "SET groupSize = groupSize + :inc",
+            ExpressionAttributeValues: {
+                ":inc": 1
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+
+        try {
+            await dynamoDB.update(params).promise();
+        } catch (err) {
+            console.error('Error in incrementGroupSize method:', err);
+            throw err;
+        }
+    }
+
+    async decrementGroupSize(groupId) {
+        const params = {
+            TableName: this.tableName,
+            Key: {
+                PK: `GROUP#${groupId}`,
+                SK: `GROUP#${groupId}`
+            },
+            UpdateExpression: "SET groupSize = groupSize - :dec",
+            ExpressionAttributeValues: {
+                ":dec": 1
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+
+        try {
+            await dynamoDB.update(params).promise();
+        } catch (err) {
+            console.error('Error in decrementGroupSize method:', err);
             throw err;
         }
     }
