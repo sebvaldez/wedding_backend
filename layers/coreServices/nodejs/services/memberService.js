@@ -1,11 +1,13 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require('aws-sdk');
-
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
+const GroupService = require('/opt/nodejs/services/groupService');
+const groupService = new GroupService(process.env.MEMBER_TABLE);
 
 // Constants
 const MEMBER_PREFIX = "MEMBER#";
 const GROUP_PREFIX = "GROUP#";
+const NON_GROUP_STATUS = "GROUP#NO_GROUP";
 
 class MemberService {
   constructor(tableName, gsiName) {
@@ -150,14 +152,11 @@ class MemberService {
     delete updates.groupId;  // Remove groupId from updates
 
     if (newGroupId && fetchedMember.SK !== `${GROUP_PREFIX}${newGroupId}`) {
-        return await this.handleSKChange(memberId, fetchedMember, newGroupId, updates);
+      // Handle group related logic
+      return await this.handleGroup(memberId, newGroupId, fetchedMember, updates);
     } else {
-        return await this.performRegularUpdate(memberId, fetchedMember.SK, updates);
+      return await this.performRegularUpdate(memberId, fetchedMember.SK, updates);
     }
-  }
-
-  async updateMemberInBulk(memberUpdates) {
-    // Implementation here
   }
 
   async fetchMember(memberId) {
@@ -166,6 +165,25 @@ class MemberService {
         throw new Error('Member not found.');
     }
     return currentMember[0];
+  }
+
+  async handleGroup(memberId, newGroupId, fetchedMember, updates) {
+    // Check if the member was previously in a group
+    if (fetchedMember.SK.startsWith(GROUP_PREFIX) && fetchedMember.SK !== NON_GROUP_STATUS) {
+        // The member was previously in a group, decrement the old group size
+        const oldGroupId = fetchedMember.SK.split('#')[1];
+        if (oldGroupId) {
+            await groupService.decrementGroupSize(oldGroupId);
+        }
+    }
+
+    // If the member is being moved to a new group, handle the SK change
+    const updatedUser = await this.handleSKChange(memberId, fetchedMember, newGroupId, updates);
+
+    // If the member is being added to a new group, increment the group size
+    await groupService.incrementGroupSize(newGroupId);
+
+    return updatedUser;
   }
 
   async handleSKChange(memberId, fetchedMember, newGroupId, updates) {
@@ -199,13 +217,21 @@ class MemberService {
   }
 
   // Helper for MemberService
-  validateUpdateParams(memberId, updates) {
+  async validateUpdateParams(memberId, updates) {
     if (!memberId || !updates || Object.keys(updates).length === 0) {
         throw new Error('Both memberId and updates are required.');
     }
     // Remove attributes that should not be updated
     const nonUpdatableAttributes = ['PK', 'SK', 'id', 'GSI1PK', 'GSI1SK', 'createdAt', 'updatedAt'];
     nonUpdatableAttributes.forEach(attr => delete updates[attr]);
+
+    // Check if groupId exists and validate it
+    if (updates.groupId) {
+      const isValidGroup = await groupService.validGroup(updates.groupId);
+      if (!isValidGroup) {
+          throw new Error(`Invalid groupId: ${updates.groupId}`);
+      }
+    }
   }
 
   getUpdateParams(memberId, currentSK, updates) {
