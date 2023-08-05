@@ -15,3 +15,19 @@ CreateGroup:
         method: post
         cors: true
         # authorization: eventually
+
+FetchGroup:
+  description: Create a new group
+  handler: functions/fetchGroups.call
+  layers:
+    - !Ref UuidLambdaLayer
+    - !Ref CoreServicesLambdaLayer
+  role: FetchGroupRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  events:
+    - http:
+        path: /wedding/groups
+        method: get
+        cors: true
+        # authorization: eventually

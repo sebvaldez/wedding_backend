@@ -15,7 +15,7 @@ emailMessage:
   role: emailMessageRole
   environment:
     REGION: ${self:provider.region}
-    SENDER_EMAIL: "valdez.sebastian4@gmail.com"
+    SENDER_EMAIL: "rsvp@allegrasebwedding.com"
   events:
     - http:
         path: /sendInvitation/{memberId}
