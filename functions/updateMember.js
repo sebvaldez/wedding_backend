@@ -1,7 +1,7 @@
 'use strict';
 
-const MemberService = require('/opt/nodejs/memberService');
-const MemberDTO = require('/opt/nodejs/memberDTO'); 
+const MemberService = require('/opt/nodejs/services/memberService');
+const MemberDTO = require('/opt/nodejs/dtos/memberDTO');
 const memberService = new MemberService(process.env.MEMBER_TABLE, process.env.MEMBER_TABLE_GSI_1);
 
 module.exports.call = async (event) => {

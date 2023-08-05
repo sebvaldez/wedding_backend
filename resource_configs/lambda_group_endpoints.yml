@@ -5,7 +5,7 @@ CreateGroup:
   handler: functions/createGroup.call
   layers:
     - !Ref UuidLambdaLayer
-    - !Ref ServicesLambdaLayer
+    - !Ref CoreServicesLambdaLayer
   role: CreateGroupRole
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}

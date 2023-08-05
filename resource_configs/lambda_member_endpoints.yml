@@ -6,7 +6,7 @@ CreateMember:
   handler: functions/createMember.call
   layers:
     - !Ref UuidLambdaLayer
-    - !Ref ServicesLambdaLayer
+    - !Ref CoreServicesLambdaLayer
   role: CreateMemberRole
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
@@ -23,7 +23,7 @@ CreateBulkMembers:
   handler: functions/createBulkMembers.call
   layers:
     - !Ref UuidLambdaLayer
-    - !Ref ServicesLambdaLayer
+    - !Ref CoreServicesLambdaLayer
   role: CreateBulkMembersRole
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
@@ -43,7 +43,7 @@ DeleteMember:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
   layers:
     - !Ref UuidLambdaLayer
-    - !Ref ServicesLambdaLayer
+    - !Ref CoreServicesLambdaLayer
   events:
     - http:
         path: /wedding/members/{memberId}
@@ -64,7 +64,7 @@ FetchMember:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
   layers:
     - !Ref UuidLambdaLayer
-    - !Ref ServicesLambdaLayer
+    - !Ref CoreServicesLambdaLayer
   events:
     - http:
         path: /wedding/members
@@ -83,7 +83,7 @@ UpdateMember:
   handler: functions/updateMember.call
   layers:
     - !Ref UuidLambdaLayer
-    - !Ref ServicesLambdaLayer
+    - !Ref CoreServicesLambdaLayer
   role: UpdateMemberRole
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
@@ -104,7 +104,7 @@ UpdateBulkMembers:
   handler: functions/updateBulkMembers.call
   layers:
     - !Ref UuidLambdaLayer
-    - !Ref ServicesLambdaLayer
+    - !Ref CoreServicesLambdaLayer
   role: UpdateBulkMembersRole
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}

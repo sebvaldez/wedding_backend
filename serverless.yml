@@ -30,6 +30,18 @@ provider:
     runtime: ${self:provider.runtime}
 
 layers:
+  common:
+    compatibleRuntimes:
+      - nodejs18.x
+    path: layers/common
+    description: Templates or helpers that are not DTOs or Services
+    retain: false # false is default, just adding for documentation
+  coreServices:
+    compatibleRuntimes:
+      - nodejs18.x
+    path: layers/coreServices
+    description: Services and DTOs
+    retain: false # false is default, just adding for documentation
   twilio:
     compatibleRuntimes:
       - nodejs18.x
@@ -41,12 +53,6 @@ layers:
       - nodejs18.x
     path: layers/uuid
     description: NPM UUID for generating v4 uuids
-    retain: false # false is default, just adding for documentation
-  services:
-    compatibleRuntimes:
-      - nodejs18.x
-    path: layers/services
-    description: Custom defined services
     retain: false # false is default, just adding for documentation
 
 functions:

@@ -1,7 +1,7 @@
 'use strict';
 
 const client = require('twilio')(process.env.TWILLIO_ACCOUNT_SID, process.env.TWILLIO_AUTH_TOKEN);
-const MemberService = require('/opt/nodejs/memberService');
+const MemberService = require('/opt/nodejs/services/memberService');
 const memberService = new MemberService(process.env.MEMBER_TABLE);
 
 module.exports.call = async (event) => {
@@ -29,7 +29,7 @@ module.exports.call = async (event) => {
     const firstName = member.firstName;
     const lastName = member.lastName;
     const email = member.email;
-    const groupId = member.group_id;
+    const groupId = member.groupId;
 
     if (!phoneNumber) {
       return {

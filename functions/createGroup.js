@@ -2,9 +2,9 @@
 
 'use strict';
 
-const GroupService = require('/opt/nodejs/groupService');
+const GroupService = require('/opt/nodejs/services/groupService');
 const groupService = new GroupService(process.env.MEMBER_TABLE);
-const GroupDTO = require('/opt/nodejs/groupDTO');
+const GroupDTO = require('/opt/nodejs/dtos/groupDTO');
 
 module.exports.call = async (event) => {
     try {

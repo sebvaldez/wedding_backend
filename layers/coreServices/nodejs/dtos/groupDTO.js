@@ -11,7 +11,9 @@ class GroupDTO {
       };
   }
 
-  // If needed, you can add a transformList method for multiple groups.
+  static transformList(groups) {
+      return groups.map(group => this.transform(group));
+  }
 }
 
 module.exports = GroupDTO;
