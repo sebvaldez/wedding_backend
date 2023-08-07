@@ -5,7 +5,6 @@ CreateMember:
     Create a memeber
   handler: functions/createMember.call
   layers:
-    - !Ref UuidLambdaLayer
     - !Ref CoreServicesLambdaLayer
   role: CreateMemberRole
   environment:
@@ -15,14 +14,13 @@ CreateMember:
         path: /wedding/members
         method: post
         cors: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}
 
 CreateBulkMembers:
   description: >-
     Create memebers in bulk
   handler: functions/createBulkMembers.call
   layers:
-    - !Ref UuidLambdaLayer
     - !Ref CoreServicesLambdaLayer
   role: CreateBulkMembersRole
   environment:
@@ -32,7 +30,7 @@ CreateBulkMembers:
         path: /wedding/members/bulk
         method: post
         cors: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}
 
 DeleteMember:
   description: >-
@@ -42,7 +40,6 @@ DeleteMember:
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
   layers:
-    - !Ref UuidLambdaLayer
     - !Ref CoreServicesLambdaLayer
   events:
     - http:
@@ -53,7 +50,7 @@ DeleteMember:
             paths:
               memberId: true
         cors: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}
 
 FetchMember:
   description: >-
@@ -63,7 +60,6 @@ FetchMember:
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
   layers:
-    - !Ref UuidLambdaLayer
     - !Ref CoreServicesLambdaLayer
   events:
     - http:
@@ -75,14 +71,13 @@ FetchMember:
               id: false
               email: false
         cors: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}
 
 UpdateMember:
   description: >-
     Update member
   handler: functions/updateMember.call
   layers:
-    - !Ref UuidLambdaLayer
     - !Ref CoreServicesLambdaLayer
   role: UpdateMemberRole
   environment:
@@ -96,14 +91,13 @@ UpdateMember:
           parameters:
             paths:
               memberId: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}
 
 UpdateBulkMembers:
   description: >-
     Update members in bulk
   handler: functions/updateBulkMembers.call
   layers:
-    - !Ref UuidLambdaLayer
     - !Ref CoreServicesLambdaLayer
   role: UpdateBulkMembersRole
   environment:
@@ -113,4 +107,4 @@ UpdateBulkMembers:
         path: /wedding/members/bulk
         method: patch
         cors: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}

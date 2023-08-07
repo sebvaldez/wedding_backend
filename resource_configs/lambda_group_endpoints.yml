@@ -4,7 +4,6 @@ CreateGroup:
   description: Create a new group
   handler: functions/createGroup.call
   layers:
-    - !Ref UuidLambdaLayer
     - !Ref CoreServicesLambdaLayer
   role: CreateGroupRole
   environment:
@@ -14,13 +13,12 @@ CreateGroup:
         path: /wedding/groups
         method: post
         cors: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}
 
 FetchGroup:
   description: Create a new group
   handler: functions/fetchGroups.call
   layers:
-    - !Ref UuidLambdaLayer
     - !Ref CoreServicesLambdaLayer
   role: FetchGroupRole
   environment:
@@ -30,4 +28,4 @@ FetchGroup:
         path: /wedding/groups
         method: get
         cors: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}

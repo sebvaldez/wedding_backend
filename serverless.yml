@@ -14,6 +14,10 @@ package:
   individually: true # package each function individually
   patterns: ${file(resource_configs/package_exclusion_list.yml)}
 
+custom:
+  # todo - fetch of orchestrated services params
+  # authorizer: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:auth-service-${self:provider.stage}-auth
+
 provider:
   name: aws
   runtime: nodejs18.x
@@ -21,6 +25,8 @@ provider:
   region: ${opt:region, 'us-west-2'}
   deploymentMethod: direct # default in v4 - https://www.serverless.com/framework/docs/providers/aws/guide/deploying
   environment:
+    # aws ssm put-parameter --name cli-test --value helloWorldCli --type String
+    # TEST_VAR: ${ssm(${self:custom.regionPreference}):cli-test}
     MEMBER_TABLE: ${self:service}-${self:opt.stage, self:provider.stage, 'dev'}-member-table
     MEMBER_TABLE_GSI_1: ${self:service}-${self:opt.stage, self:provider.stage, 'dev'}-member-table-GSI-1
   tags:
@@ -40,7 +46,7 @@ layers:
     compatibleRuntimes:
       - nodejs18.x
     path: layers/coreServices
-    description: Services and DTOs
+    description: NPM uuid & aws-skd, Services, and DTOs
     retain: false # false is default, just adding for documentation
   twilio:
     compatibleRuntimes:
@@ -48,11 +54,11 @@ layers:
     path: layers/twilio
     description: NPM Twillio package for texting
     retain: false # false is default, just adding for documentation
-  uuid:
+  sendGrid:
     compatibleRuntimes:
       - nodejs18.x
-    path: layers/uuid
-    description: NPM UUID for generating v4 uuids
+    path: layers/sendGrid
+    description: NPM package including @sendgrid/mail
     retain: false # false is default, just adding for documentation
 
 functions:
