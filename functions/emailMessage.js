@@ -1,8 +1,10 @@
 const fs = require('fs');
-const AWS = require('aws-sdk');
-const ses = new AWS.SES({ region: process.env.REGION });
+const sgMail = require('@sendgrid/mail');
 const MemberService = require('/opt/nodejs/services/memberService');
 const memberService = new MemberService(process.env.MEMBER_TABLE);
+
+// Set the SendGrid API Key
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 module.exports.call = async (event, context, callback) => {
   try {
@@ -44,25 +46,16 @@ module.exports.call = async (event, context, callback) => {
       .replace('[Recipient\'s Name]', `${firstName} ${lastName}`)
       .replace('[RSVP Link]', `https://allegrasebwedding.com/rsvp?email=${email}${groupId ? `&groupId=${groupId}` : ''}`);
 
-    const emailParams = {
-      Destination: {
-        ToAddresses: [email] // Send to member's email
-      },
-      Message: {
-        Subject: {
-          Data: 'Wedding Site RSVP Test Email'
-        },
-        Body: {
-          Html: {
-            Data: personalizedHtmlTemplate
-          }
-        }
-      },
-      Source: process.env.SENDER_EMAIL
+    const msg = {
+      to: email,
+      from: process.env.SENDGRID_SENDER_EMAIL,
+      subject: 'Wedding Site RSVP Test Email',
+      html: personalizedHtmlTemplate,
     };
 
-    const response = await ses.sendEmail(emailParams).promise();
-    return { statusCode: 201, body: JSON.stringify(response, null, 2) };
+    await sgMail.send(msg);
+
+    return { statusCode: 201, body: JSON.stringify({ message: 'Email sent' }) };
 
   } catch (error) {
     console.error('Error in emailMessage lambda:', error);

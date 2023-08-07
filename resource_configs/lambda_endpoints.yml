@@ -11,11 +11,11 @@ emailMessage:
   layers:
     - !Ref CommonLambdaLayer
     - !Ref CoreServicesLambdaLayer
-    - !Ref UuidLambdaLayer
+    - !Ref SendGridLambdaLayer
   role: emailMessageRole
   environment:
-    REGION: ${self:provider.region}
-    SENDER_EMAIL: "rsvp@allegrasebwedding.com"
+    SENDGRID_SENDER_EMAIL: "rsvp@allegrasebwedding.com"
+    SENDGRID_API_KEY: ${ssm(${self:provider.region}):sendgrid-api-key}
   events:
     - http:
         path: /sendInvitation/{memberId}
@@ -25,7 +25,7 @@ emailMessage:
             paths:
               memberId: true
         cors: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}
 
 textMessage:
   description: >-
@@ -34,9 +34,8 @@ textMessage:
   timeout: 10
   handler: functions/textMessage.call
   layers:
-    - !Ref TwilioLambdaLayer
-    - !Ref UuidLambdaLayer
     - !Ref CoreServicesLambdaLayer
+    - !Ref TwilioLambdaLayer
   role: textMessageRole
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
@@ -52,4 +51,4 @@ textMessage:
             paths:
               memberId: true
         cors: true
-        # authorization: eventually
+        # authorizer: ${self:custom.authorizer}
