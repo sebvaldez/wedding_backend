@@ -1,12 +1,8 @@
 # ServerlessFramework Syntax
-  - "!*.zip"
-  - "!resource_configs.zip"
   - "!*.md"
   - "!*.txt"
   - "!*.tar.gz"
   - "!layers"
   - "!node_modules"
   - "!resource_configs"
-  - "!tests"
   - "!.serverless"
-  - "!sample-serverless.yml"

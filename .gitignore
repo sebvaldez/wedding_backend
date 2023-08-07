@@ -9,3 +9,6 @@ work_in_progress.md
 *.zip
 .txt
 .DS_Store
+
+secret.pem
+.webpack

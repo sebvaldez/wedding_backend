@@ -25,7 +25,7 @@ emailMessage:
             paths:
               memberId: true
         cors: true
-        # authorizer: ${self:custom.authorizer}
+        authorizer: ${self:custom.authorizer}
 
 textMessage:
   description: >-
@@ -51,4 +51,4 @@ textMessage:
             paths:
               memberId: true
         cors: true
-        # authorizer: ${self:custom.authorizer}
+        authorizer: ${self:custom.authorizer}

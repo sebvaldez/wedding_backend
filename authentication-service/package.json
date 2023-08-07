@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "jsonwebtoken": "^9.0.1"
+  },
+  "devDependencies": {
+    "serverless-bundle": "^6.0.0"
+  }
+}

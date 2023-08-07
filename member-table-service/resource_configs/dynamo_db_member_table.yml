@@ -30,3 +30,19 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+Outputs:
+  MemberTableNameOutput:
+    Description: "The logical name of the Member DynamoDB Table"
+    Value: !Ref MemberTable
+
+  MemberTableGsi1Name:
+    Description: "The name of the first Global Secondary Index for the Member DynamoDB Table"
+    Value: 
+      !Sub 
+        - "${MemberTable}-GSI-1"
+        - MemberTable: !Ref MemberTable
+
+  MemberTableArnOutput:
+    Description: "The ARN of the Member DynamoDB Table"
+    Value: !GetAtt MemberTable.Arn
+

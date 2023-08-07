@@ -1,0 +1,17 @@
+# Serverless Compose
+services:
+  Authentication:
+    path: authentication-service
+
+  MemberTableService:
+    path: member-table-service
+
+  MemberEndpoints:
+    path: member-endpoint-service
+    params:
+      MEMBER_TABLE_NAME: ${MemberTableService.MemberTableNameOutput}
+      MEMBER_TABLE_GSI_1_NAME: ${MemberTableService.MemberTableGsi1Name}
+      MEMBER_TABLE_ARN: ${MemberTableService.MemberTableArnOutput}
+    dependsOn:
+      - Authentication
+      - MemberTableService

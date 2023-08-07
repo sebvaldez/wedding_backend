@@ -15,8 +15,7 @@ package:
   patterns: ${file(resource_configs/package_exclusion_list.yml)}
 
 custom:
-  # todo - fetch of orchestrated services params
-  # authorizer: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:auth-service-${self:provider.stage}-auth
+  authorizer: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:wedding-backend-auth-service-${self:provider.stage}-auth
 
 provider:
   name: aws
@@ -27,8 +26,11 @@ provider:
   environment:
     # aws ssm put-parameter --name cli-test --value helloWorldCli --type String
     # TEST_VAR: ${ssm(${self:custom.regionPreference}):cli-test}
-    MEMBER_TABLE: ${self:service}-${self:opt.stage, self:provider.stage, 'dev'}-member-table
-    MEMBER_TABLE_GSI_1: ${self:service}-${self:opt.stage, self:provider.stage, 'dev'}-member-table-GSI-1
+    # MEMBER_TABLE: wedding-backend-member-table-${self:opt.stage, self:provider.stage, 'dev'}-member-table
+    # MEMBER_TABLE_GSI_1: ${self:service}-${self:opt.stage, self:provider.stage, 'dev'}-member-table-GSI-1
+    MEMBER_TABLE: ${param:MEMBER_TABLE_NAME}
+    MEMBER_TABLE_GSI_1: ${param:MEMBER_TABLE_GSI_1_NAME}
+    MEMBER_TABLE_ARN: ${param:MEMBER_TABLE_ARN}
   tags:
     project: ${self:service}
     environment: ${self:provider.stage}
@@ -71,4 +73,3 @@ functions:
 resources:
   - ${file(resource_configs/iam_roles.yml)}
   - ${file(resource_configs/iam_policies.yml)}
-  - ${file(resource_configs/dynamo_db_member_table.yml)}

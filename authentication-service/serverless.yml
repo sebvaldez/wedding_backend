@@ -1,0 +1,75 @@
+frameworkVersion: "3"
+
+service: wedding-backend-auth-service
+
+org: sebdev
+
+plugins:
+  - serverless-bundle
+
+params:
+  dev:
+    profile: sebs-aws
+    developer_email: valdez.sebastian4@gmail.com
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-west-2'}
+  deploymentMethod: direct # default in v4 - https://www.serverless.com/framework/docs/providers/aws/guide/deploying
+  memorySize: 128
+  environment:
+    AUTH0_PUBLIC_KEY: ${ssm(${self:provider.region}):auth0-public-key}
+  tags:
+    project: ${self:service}-auth
+    environment: ${self:provider.stage}
+    region: ${self:provider.region}
+    runtime: ${self:provider.runtime}
+
+functions:
+  auth:
+    handler: auth.handler
+    cors: true
+  publicEndpoint:
+    handler: public.handler
+    events:
+      - http:
+          path: public
+          method: POST
+          cors: true
+  privateEndpoint:
+    handler: private.handler
+    events:
+      - http:
+          path: private
+          method: POST
+          authorizer: auth
+          cors: true
+
+resources:
+  Resources:
+    # This response is needed for custom authorizer failures cors support ¯\_(ツ)_/¯
+    GatewayResponse:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: EXPIRED_TOKEN
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+        StatusCode: "401"
+    AuthFailureGatewayResponse:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+        StatusCode: "401"
+custom:
+  bundle:
+    linting: false

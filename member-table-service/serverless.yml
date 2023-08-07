@@ -1,0 +1,32 @@
+app: wedding-backend
+frameworkVersion: "3"
+
+org: sebdev
+
+service: wedding-backend-member-table
+
+params:
+  dev:
+    profile: sebs-aws
+    developer_email: valdez.sebastian4@gmail.com
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-west-2'}
+  deploymentMethod: direct # default in v4 - https://www.serverless.com/framework/docs/providers/aws/guide/deploying
+  environment:
+    # aws ssm put-parameter --name cli-test --value helloWorldCli --type String
+    # TEST_VAR: ${ssm(${self:custom.regionPreference}):cli-test}
+    MEMBER_TABLE: ${self:service}-${self:opt.stage, self:provider.stage, 'dev'}
+    MEMBER_TABLE_GSI_1: ${self:service}-GSI-1-${self:opt.stage, self:provider.stage, 'dev'}
+  tags:
+    project: ${self:service}
+    environment: ${self:provider.stage}
+    region: ${self:provider.region}
+    runtime: ${self:provider.runtime}
+
+# CloudFront definitions
+resources:
+  - ${file(resource_configs/dynamo_db_member_table.yml)}
