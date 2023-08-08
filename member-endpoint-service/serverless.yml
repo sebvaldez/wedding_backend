@@ -15,7 +15,7 @@ package:
   patterns: ${file(resource_configs/package_exclusion_list.yml)}
 
 custom:
-  authorizer: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:wedding-backend-auth-service-${self:provider.stage}-auth
+  authorizer: ${param:AUTHORIZER_ID}
 
 provider:
   name: aws
@@ -23,6 +23,9 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-west-2'}
   deploymentMethod: direct # default in v4 - https://www.serverless.com/framework/docs/providers/aws/guide/deploying
+  apiGateway:
+    restApiId: ${param:API_GATEWAY_ID}
+    restApiRootResourceId: ${param:API_GATEWAY_ROOT_RESOURCE_ID}
   environment:
     # aws ssm put-parameter --name cli-test --value helloWorldCli --type String
     # TEST_VAR: ${ssm(${self:custom.regionPreference}):cli-test}
