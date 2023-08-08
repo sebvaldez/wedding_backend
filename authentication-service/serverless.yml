@@ -12,6 +12,10 @@ params:
     profile: sebs-aws
     developer_email: valdez.sebastian4@gmail.com
 
+custom:
+  bundle:
+    linting: false
+
 provider:
   name: aws
   runtime: nodejs18.x
@@ -70,6 +74,20 @@ resources:
         RestApiId:
           Ref: "ApiGatewayRestApi"
         StatusCode: "401"
-custom:
-  bundle:
-    linting: false
+  Outputs:
+    ApiGatewayRestApiId:
+      Description: "API Gateway ID"
+      Value:
+        Ref: "ApiGatewayRestApi"
+    ApiGatewayRootResourceId:
+      Description: "API Gateway Root Resource ID"
+      Value:
+        Fn::GetAtt:
+          - "ApiGatewayRestApi"
+          - "RootResourceId"
+    AuthApiGatewayAuthorizerId:
+        Description: "Authorizer ID"
+        Value:
+          Ref: "AuthApiGatewayAuthorizer"
+        Export:
+          Name: "${self:service}-${self:provider.stage}-AuthAuthorizerId"

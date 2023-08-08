@@ -6,6 +6,7 @@ export async function handler(event, context) {
       'Access-Control-Allow-Origin': '*',
       /* Required for cookies, authorization headers with HTTPS */
       'Access-Control-Allow-Credentials': true,
+      'Access-Control-Allow-Headers': '*'
     },
     body: JSON.stringify({
       message: 'Hi from Public API',
