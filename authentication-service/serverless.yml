@@ -24,7 +24,7 @@ provider:
   deploymentMethod: direct # default in v4 - https://www.serverless.com/framework/docs/providers/aws/guide/deploying
   memorySize: 128
   environment:
-    AUTH0_PUBLIC_KEY: ${ssm(${self:provider.region}):auth0-public-key}
+    AUTH0_PUBLIC_KEY: ${ssm(${self:provider.region}):auth0-public-key-${self:provider.stage}}
   tags:
     project: ${self:service}-auth
     environment: ${self:provider.stage}
