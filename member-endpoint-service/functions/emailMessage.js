@@ -2,11 +2,13 @@ const fs = require('fs');
 const sgMail = require('@sendgrid/mail');
 const MemberService = require('/opt/nodejs/services/memberService');
 const memberService = new MemberService(process.env.MEMBER_TABLE);
+const middy = require('@middy/core');
+const cors = require('@middy/http-cors');
 
 // Set the SendGrid API Key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-module.exports.call = async (event, context, callback) => {
+const emailMessageLogic = async (event) => {
   try {
     const memberId = event.pathParameters.memberId;
 
@@ -65,3 +67,11 @@ module.exports.call = async (event, context, callback) => {
     };
   }
 };
+
+const handler = middy(emailMessageLogic)
+    .use(cors({
+        origin: '*',
+        credentials: true
+    }));
+
+module.exports.call = handler;

@@ -1,10 +1,13 @@
 'use strict';
 
+const middy = require('@middy/core');
+const cors = require('@middy/http-cors');
+
 const client = require('twilio')(process.env.TWILLIO_ACCOUNT_SID, process.env.TWILLIO_AUTH_TOKEN);
 const MemberService = require('/opt/nodejs/services/memberService');
 const memberService = new MemberService(process.env.MEMBER_TABLE);
 
-module.exports.call = async (event) => {
+const textMessageLogic = async (event) => {
   try {
     const memberId = event.pathParameters.memberId;
 
@@ -65,3 +68,12 @@ module.exports.call = async (event) => {
     };
   }
 };
+
+const handler = middy(textMessageLogic)
+    .use(cors({
+      origin: '*',
+      credentials: true,
+      headers: '*'
+    }));
+
+module.exports.call = handler;
