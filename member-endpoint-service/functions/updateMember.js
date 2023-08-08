@@ -1,11 +1,13 @@
 'use strict';
+const middy = require('@middy/core');
+const cors = require('@middy/http-cors');
 
 const MemberService = require('/opt/nodejs/services/memberService');
 const MemberDTO = require('/opt/nodejs/dtos/memberDTO');
 const memberService = new MemberService(process.env.MEMBER_TABLE, process.env.MEMBER_TABLE_GSI_1);
 
-module.exports.call = async (event) => {
-    const memberId = event.pathParameters.memberId;  // Assuming you're passing the memberId as a path parameter
+const updateMemberLogic = async (event) => {
+    const memberId = event.pathParameters.memberId;
     const updates = JSON.parse(event.body);
 
     // Validate input
@@ -31,3 +33,12 @@ module.exports.call = async (event) => {
         };
     }
 };
+
+const handler = middy(updateMemberLogic)
+    .use(cors({
+        origin: '*',
+        credentials: true,
+        headers: '*'
+    }))
+
+module.exports.call = handler;

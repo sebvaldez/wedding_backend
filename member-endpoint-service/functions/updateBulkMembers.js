@@ -1,10 +1,12 @@
 'use strict';
+const middy = require('@middy/core');
+const cors = require('@middy/http-cors');
 
 const MemberService = require('/opt/nodejs/services/memberService');
 const memberService = new MemberService(process.env.MEMBER_TABLE, process.env.MEMBER_TABLE_GSI_1);
 const MemberDTO = require('/opt/nodejs/dtos/memberDTO');
 
-module.exports.call = async (event) => {
+const updateMemberBulkLogic = async (event) => {
     try {
         const memberUpdates = JSON.parse(event.body);
 
@@ -49,3 +51,12 @@ module.exports.call = async (event) => {
         };
     }
 };
+
+const handler = middy(updateMemberBulkLogic)
+    .use(cors({
+        origin: '*',
+        credentials: true,
+        headers: '*'
+    }))
+
+module.exports.call = handler;

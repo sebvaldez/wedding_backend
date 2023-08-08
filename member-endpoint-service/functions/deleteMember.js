@@ -1,9 +1,11 @@
 'use strict';
+const middy = require('@middy/core');
+const cors = require('@middy/http-cors');
 
 const MemberService = require('/opt/nodejs/services/memberService');
 const memberService = new MemberService(process.env.MEMBER_TABLE, process.env.MEMBER_TABLE_GSI_1);
 
-module.exports.call = async (event, context, callback) => {
+const deleteMemberLogic = async (event) => {
     const request_params = event.pathParameters;
 
     // Assuming your path parameter contains memberId like /members/{memberId}
@@ -37,3 +39,12 @@ module.exports.call = async (event, context, callback) => {
         };
     }
 };
+
+const handler = middy(deleteMemberLogic)
+    .use(cors({
+        origin: '*',
+        credentials: true,
+        headers: '*'
+    }))
+
+module.exports.call = handler;

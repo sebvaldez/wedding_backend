@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "@middy/core": "^4.5.5",
+    "@middy/http-cors": "^4.5.5",
+    "@middy/http-error-handler": "^4.5.5",
     "aws-sdk": "^2.1431.0",
     "uuid": "^9.0.0"
   }

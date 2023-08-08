@@ -1,10 +1,11 @@
 'use strict';
+const middy = require('@middy/core');
+const cors = require('@middy/http-cors');
 
 const MemberService = require('/opt/nodejs/services/memberService');
 const memberService = new MemberService(process.env.MEMBER_TABLE, process.env.MEMBER_TABLE_GSI_1);
 
-// create bulk members
-module.exports.call = async (event, context, callback) => {
+const createBulkMemberLogic = async (event) => {
     const create_member_params = JSON.parse(event.body);
 
     // Validate the input
@@ -29,3 +30,12 @@ module.exports.call = async (event, context, callback) => {
         };
     }
 };
+
+const handler = middy(createBulkMemberLogic)
+    .use(cors({
+        origin: '*',
+        credentials: true,
+        headers: '*'
+    }))
+
+module.exports.call = handler;
