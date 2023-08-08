@@ -13,7 +13,9 @@ CreateGroup:
         path: /wedding/groups
         method: post
         cors: true
-        authorizer: ${self:custom.authorizer}
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}
 
 FetchGroup:
   description: Create a new group
@@ -28,4 +30,6 @@ FetchGroup:
         path: /wedding/groups
         method: get
         cors: true
-        authorizer: ${self:custom.authorizer}
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}

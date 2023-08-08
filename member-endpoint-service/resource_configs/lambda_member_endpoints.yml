@@ -14,7 +14,9 @@ CreateMember:
         path: /wedding/members
         method: post
         cors: true
-        authorizer: ${self:custom.authorizer}
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}
 
 CreateBulkMembers:
   description: >-
@@ -30,7 +32,9 @@ CreateBulkMembers:
         path: /wedding/members/bulk
         method: post
         cors: true
-        authorizer: ${self:custom.authorizer}
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}
 
 DeleteMember:
   description: >-
@@ -50,7 +54,9 @@ DeleteMember:
             paths:
               memberId: true
         cors: true
-        authorizer: ${self:custom.authorizer}
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}
 
 FetchMember:
   description: >-
@@ -71,7 +77,9 @@ FetchMember:
               id: false
               email: false
         cors: true
-        authorizer: ${self:custom.authorizer}
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}
 
 UpdateMember:
   description: >-
@@ -91,7 +99,9 @@ UpdateMember:
           parameters:
             paths:
               memberId: true
-        authorizer: ${self:custom.authorizer}
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}
 
 UpdateBulkMembers:
   description: >-
@@ -107,4 +117,6 @@ UpdateBulkMembers:
         path: /wedding/members/bulk
         method: patch
         cors: true
-        authorizer: ${self:custom.authorizer}
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}
