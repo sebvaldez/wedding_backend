@@ -1,9 +1,10 @@
 const fs = require('fs');
+const middy = require('@middy/core');
+const cors = require('@middy/http-cors');
 const sgMail = require('@sendgrid/mail');
 const MemberService = require('/opt/nodejs/services/memberService');
 const memberService = new MemberService(process.env.MEMBER_TABLE);
-const middy = require('@middy/core');
-const cors = require('@middy/http-cors');
+const MemberDTO = require('/opt/nodejs/dtos/memberDTO');
 
 // Set the SendGrid API Key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -28,11 +29,16 @@ const emailMessageLogic = async (event) => {
       };
     }
 
-    const member = members[0];
-    const email = member.email;
-    const firstName = member.firstName;
-    const lastName = member.lastName;
-    const groupId = member.groupId;
+    const transformedMember = MemberDTO.transform(members[0]);
+
+    const email = transformedMember.email;
+    const firstName = transformedMember.firstName;
+    const lastName = transformedMember.lastName;
+    const groupId = transformedMember.groupId;
+    const checkIn = transformedMember.checkIn;
+    const emailedInvitation = transformedMember.emailedInvitation;
+
+    //todo handle when email has already been sent / already checked in
 
     if (!email) {
       return {
