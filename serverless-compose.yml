@@ -12,6 +12,9 @@ services:
       MEMBER_TABLE_NAME: ${MemberTableService.MemberTableNameOutput}
       MEMBER_TABLE_GSI_1_NAME: ${MemberTableService.MemberTableGsi1Name}
       MEMBER_TABLE_ARN: ${MemberTableService.MemberTableArnOutput}
+      API_GATEWAY_ID: ${Authentication.ApiGatewayRestApiId}
+      API_GATEWAY_ROOT_RESOURCE_ID: ${Authentication.ApiGatewayRootResourceId}
+      AUTHORIZER_ID: ${Authentication.AuthApiGatewayAuthorizerId}
     dependsOn:
       - Authentication
       - MemberTableService
