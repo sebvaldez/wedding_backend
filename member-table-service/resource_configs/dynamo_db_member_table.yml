@@ -37,10 +37,7 @@ Outputs:
 
   MemberTableGsi1Name:
     Description: "The name of the first Global Secondary Index for the Member DynamoDB Table"
-    Value: 
-      !Sub 
-        - "${MemberTable}-GSI-1"
-        - MemberTable: !Ref MemberTable
+    Value: ${self:provider.environment.MEMBER_TABLE_GSI_1}
 
   MemberTableArnOutput:
     Description: "The ARN of the Member DynamoDB Table"

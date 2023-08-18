@@ -65,6 +65,7 @@ FetchMember:
   role: FetchMemberRole
   environment:
     MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+    MEMBER_TABLE_GSI_1: ${self:provider.environment.MEMBER_TABLE_GSI_1}
   layers:
     - !Ref CoreServicesLambdaLayer
   events:
