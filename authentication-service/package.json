@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "jsonwebtoken": "^9.0.1"
+    "jsonwebtoken": "^9.0.1",
+    "jwks-rsa": "^3.0.1"
   },
   "devDependencies": {
     "serverless-bundle": "^6.0.0"

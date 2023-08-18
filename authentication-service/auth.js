@@ -1,8 +1,23 @@
+import util from 'util';
 import jwt from 'jsonwebtoken';
+import jwksClient from 'jwks-rsa';
 
-// By default, API Gateway authorizations are cached (TTL) for 300 seconds.
-// This policy will authorize all requests to the same API Gateway instance where the
-// request is coming from, thus being efficient and optimising costs.
+const verifyAsync = util.promisify(jwt.verify); // Convert callback-based function to a promise-based one.
+
+// JWKS client for retrieving RSA signing keys
+const client = jwksClient({
+  jwksUri: `${process.env.AUTH0_TENANT}.well-known/jwks.json`
+});
+
+// Retrieve the signing key
+function getKey(header, callback) {
+  client.getSigningKey(header.kid, function(err, key) {
+    var signingKey = key.publicKey || key.rsaPublicKey;
+    callback(null, signingKey);
+  });
+}
+
+// Policy generation function remains the same
 const generatePolicy = (principalId, methodArn) => {
   const apiGatewayWildcard = methodArn.split('/', 2).join('/') + '/*';
 
@@ -22,6 +37,7 @@ const generatePolicy = (principalId, methodArn) => {
 };
 
 export async function handler(event, context) {
+
   if (!event.authorizationToken) {
     throw 'Unauthorized';
   }
@@ -29,7 +45,13 @@ export async function handler(event, context) {
   const token = event.authorizationToken.replace('Bearer ', '');
 
   try {
-    const claims = jwt.verify(token, process.env.AUTH0_PUBLIC_KEY);
+    // You'll verify against the expected audience and issuer
+    const claims = await verifyAsync(token, getKey, {
+      audience: [process.env.BACKEND_AUDIENCE_ENV, process.env.FRONTEND_AUDIENCE_ENV],
+      issuer: process.env.AUTH0_TENANT,
+      algorithms: ['RS256']
+    });
+
     const policy = generatePolicy(claims.sub, event.methodArn);
 
     return {

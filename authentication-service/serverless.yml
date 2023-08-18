@@ -34,6 +34,10 @@ provider:
 functions:
   auth:
     handler: auth.handler
+    environment:
+      AUTH0_TENANT: ${ssm(${self:provider.region}):auth0_tenant}
+      BACKEND_AUDIENCE_ENV: ${ssm(${self:provider.region}):backend-audience-env}
+      FRONTEND_AUDIENCE_ENV: ${ssm(${self:provider.region}):frontend-audience-env}
     cors: true
   publicEndpoint:
     handler: public.handler
