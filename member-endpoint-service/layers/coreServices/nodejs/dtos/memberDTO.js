@@ -25,7 +25,7 @@ class MemberDTO {
         firstName: member.firstName,
         plannedTransportation: member.plannedTransportation,
         specialSippingPreference: member.specialSippingPreference,
-        checkIn: member.checkIn,
+        attending: member.attending,
         groupId: groupId,
         createdAt: member.createdAt,
         updatedAt: member.updatedAt
