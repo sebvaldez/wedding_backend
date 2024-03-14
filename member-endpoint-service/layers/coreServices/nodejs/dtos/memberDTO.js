@@ -17,16 +17,19 @@ class MemberDTO {
 
     return {
         id: id,
-        phoneNumber: member.phoneNumber,
-        emailedInvitation: member.emailedInvitation,
-        dinnerSelection: member.dinnerSelection,
+        firstName: member.firstName,
         lastName: member.lastName,
         email: member.email,
-        firstName: member.firstName,
+        phoneNumber: member.phoneNumber,
+        rsvpTextUpdates: member.rsvpTextUpdates,
+        emailedInvitation: member.emailedInvitation,
+        attending: member.attending,
+        dinnerSelection: member.dinnerSelection,
+        foodAllergies: member.foodAllergies,
         plannedTransportation: member.plannedTransportation,
         specialSippingPreference: member.specialSippingPreference,
-        attending: member.attending,
         groupId: groupId,
+
         createdAt: member.createdAt,
         updatedAt: member.updatedAt
     };
