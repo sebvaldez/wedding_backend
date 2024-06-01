@@ -47,7 +47,7 @@ export async function handler(event, context) {
   try {
     // You'll verify against the expected audience and issuer
     const claims = await verifyAsync(token, getKey, {
-      audience: [process.env.BACKEND_AUDIENCE_ENV, process.env.FRONTEND_AUDIENCE_ENV],
+      audience: [process.env.AUTH0_APPLICATION_BACKEND_AUDIENCE_ENV, process.env.AUTH0_APPLICATION_FRONTEND_AUDIENCE_ENV],
       issuer: process.env.AUTH0_TENANT,
       algorithms: ['RS256']
     });
