@@ -35,9 +35,9 @@ functions:
   auth:
     handler: auth.handler
     environment:
-      AUTH0_TENANT: ${ssm(${self:provider.region}):auth0_tenant}
-      BACKEND_AUDIENCE_ENV: ${ssm(${self:provider.region}):backend-audience-env}
-      FRONTEND_AUDIENCE_ENV: ${ssm(${self:provider.region}):frontend-audience-env}
+      AUTH0_TENANT: ${ssm(${self:provider.region}):auth0_tenant_${self:provider.stage}}
+      AUTH0_APPLICATION_BACKEND_AUDIENCE_ENV: ${ssm(${self:provider.region}):auth0_application_backend_audience_${self:provider.stage}}
+      AUTH0_APPLICATION_FRONTEND_AUDIENCE_ENV: ${ssm(${self:provider.region}):auth0_application_frontend_audience_${self:provider.stage}}
     cors: true
   publicEndpoint:
     handler: public.handler
