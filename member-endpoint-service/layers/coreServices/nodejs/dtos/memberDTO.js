@@ -28,6 +28,7 @@ class MemberDTO {
         foodAllergies: member.foodAllergies,
         plannedTransportation: member.plannedTransportation,
         specialSippingPreference: member.specialSippingPreference,
+        otherFoodAllergy: member.otherFoodAllergy,
         groupId: groupId,
 
         createdAt: member.createdAt,
