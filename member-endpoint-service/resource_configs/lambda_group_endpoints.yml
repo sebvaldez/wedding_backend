@@ -33,3 +33,24 @@ FetchGroup:
         authorizer:
           type: TOKEN
           authorizerId: ${self:custom.authorizer}
+
+FetchGroupMembers:
+  description: Fetch Members in a given Group ID
+  handler: functions/fetchGroupMembers.call
+  layers:
+    - !Ref CoreServicesLambdaLayer
+  role: FetchGroupMembersRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  events:
+    - http:
+        path: /wedding/group/{groupId}/members
+        method: get
+        request:
+          parameters:
+            paths:
+              groupId: true
+        cors: true
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}

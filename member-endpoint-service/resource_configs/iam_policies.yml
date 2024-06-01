@@ -23,6 +23,7 @@ Resources:
         - Ref: UpdateBulkMembersRole
         - Ref: CreateGroupRole
         - Ref: FetchGroupRole
+        - Ref: FetchGroupMembersRole
         - Ref: textMessageRole
         - Ref: emailMessageRole
 
@@ -58,5 +59,6 @@ Resources:
         - Ref: UpdateBulkMembersRole
         - Ref: CreateGroupRole
         - Ref: FetchGroupRole
+        - Ref: FetchGroupMembersRole
         - Ref: textMessageRole
         - Ref: emailMessageRole

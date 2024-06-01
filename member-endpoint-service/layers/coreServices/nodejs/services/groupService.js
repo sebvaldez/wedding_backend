@@ -66,6 +66,24 @@ class GroupService {
         }
     }
 
+    async getGroup(groupId) {
+        const params = {
+            TableName: this.tableName,
+            Key: {
+                PK: `GROUP#${groupId}`,
+                SK: `GROUP#${groupId}`
+            }
+        };
+
+        try {
+            const result = await dynamoDB.get(params).promise();
+            return result.Item;
+        } catch (err) {
+            console.error('Error in getGroup method:', err);
+            throw err;
+        }
+    }
+
     async incrementGroupSize(groupId) {
         const params = {
             TableName: this.tableName,

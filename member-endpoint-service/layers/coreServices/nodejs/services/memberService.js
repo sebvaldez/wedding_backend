@@ -216,6 +216,28 @@ class MemberService {
     }
   }
 
+  async fetchMembersByGroupId(groupId) {
+    const scanParams = {
+      TableName: this.tableName,
+      FilterExpression: "begins_with(PK, :pk) and SK = :sk",
+      ExpressionAttributeValues: {
+        ":pk": MEMBER_PREFIX,
+        ":sk": `${GROUP_PREFIX}${groupId}`
+      }
+    };
+
+    console.log('MemberService#fetchMembersByGroupId scanParams:', scanParams);
+
+    try {
+      const result = await dynamoDB.scan(scanParams).promise();
+      return result.Items;
+    } catch (err) {
+      console.error('Error in fetchMembersByGroupId:', err);
+      throw err;
+    }
+  }
+
+
   // Helper for MemberService
   async validateUpdateParams(memberId, updates) {
     if (!memberId || !updates || Object.keys(updates).length === 0) {
