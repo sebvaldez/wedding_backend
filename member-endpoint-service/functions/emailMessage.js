@@ -52,7 +52,7 @@ const emailMessageLogic = async (event) => {
     // Interpolate the member's information into the HTML template
     const personalizedHtmlTemplate = htmlTemplate
       .replace('[Recipient\'s Name]', `${firstName} ${lastName}`)
-      .replace('[RSVP Link]', `https://allegrasebwedding.com/rsvp?email=${email}${groupId ? `&groupId=${groupId}` : ''}`);
+      .replace('[RSVP Link]', `https://allegrasebwedding.com/rsvp?userId=${memberId}${groupId ? `&groupId=${groupId}` : ''}`);
 
     const msg = {
       to: email,
