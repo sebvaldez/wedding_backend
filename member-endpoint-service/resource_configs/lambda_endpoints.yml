@@ -52,6 +52,9 @@ textMessage:
           parameters:
             paths:
               memberId: true
+            querystrings:
+              env: false
+              messageType: false
         cors: true
         authorizer:
           type: TOKEN
