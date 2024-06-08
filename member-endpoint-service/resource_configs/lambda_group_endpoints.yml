@@ -18,6 +18,27 @@ CreateGroup:
           authorizerId: ${self:custom.authorizer}
 
 FetchGroup:
+  description: Show a group by ID
+  handler: functions/fetchGroup.call
+  layers:
+    - !Ref CoreServicesLambdaLayer
+  role: FetchGroupRole
+  environment:
+    MEMBER_TABLE: ${self:provider.environment.MEMBER_TABLE}
+  events:
+    - http:
+        path: /wedding/groups/{groupId}
+        method: get
+        request:
+          parameters:
+            paths:
+              groupId: true
+        cors: true
+        authorizer:
+          type: TOKEN
+          authorizerId: ${self:custom.authorizer}
+
+FetchGroups:
   description: Create a new group
   handler: functions/fetchGroups.call
   layers:
