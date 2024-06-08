@@ -7,6 +7,7 @@ const groupService = new GroupService(process.env.MEMBER_TABLE);
 const GroupDTO = require('/opt/nodejs/dtos/groupDTO');
 
 module.exports.call = async (event, context, callback) => {
+    
     try {
         const groups = await groupService.listGroups();
         const transformedGroups = GroupDTO.transformList(groups);  // Assuming you have a transformList method in DTO
