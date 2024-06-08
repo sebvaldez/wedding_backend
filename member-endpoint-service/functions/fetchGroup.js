@@ -2,12 +2,14 @@
 
 'use strict';
 
-// import group service and gorup dto
+const middy = require('@middy/core');
+const cors = require('@middy/http-cors');
+
 const GroupService = require('/opt/nodejs/services/groupService');
 const groupService = new GroupService(process.env.MEMBER_TABLE);
 const GroupDTO = require('/opt/nodejs/dtos/groupDTO');
 
-module.exports.call = async (event, context, callback) => {
+const fetchGroupLogic = async (event, context, callback) => {
   // get id from path parameter, validate and handle errors
   const groupId = event.pathParameters.groupId;
   if (!groupId) {
@@ -33,3 +35,12 @@ module.exports.call = async (event, context, callback) => {
     };
   }
 };
+
+const handler = middy(fetchGroupLogic)
+  .use(cors({
+    origin: '*',
+    credentials: true,
+    headers: '*'
+  }));
+
+module.exports.call = handler;
