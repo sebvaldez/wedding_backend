@@ -11,17 +11,21 @@ const memberService = new MemberService(process.env.MEMBER_TABLE);
 const templates = {
   initialInvitation: `Hello {firstName}, it's Sebastian & Allegra!
 
-  The online portal to RSVP for our wedding on September 8, 2024 in Portland, OR is now available! A formal invitation has been sent to your email, and includes a direct link to RSVP for yourself or for your entire party, as well details on the location, arrival time, and attire. Your submissions will remain editable up to the RSVP by date of July 31st.
+The online RSVP portal for our wedding on September 8, 2024 in Portland, OR is now available!
 
-  For additional information regarding hotel blocks and F.A.Qs, please visit our wedding website at www.allegrasebwedding.com.
+A formal invitation has been sent to your email, and includes a direct link to RSVP for yourself or for your entire party. Details on the location, arrival time, and attire can also be found in your RSVP email.
 
-  We hope to have you join us for our special day! {rsvpLink}`,
+Submissions will remain editable up to the RSVP by date of August 10th.
+
+For additional information regarding hotel blocks and F.A.Qs, please visit our wedding website at www.allegrasebwedding.com.
+
+We hope to have you join us for our special day!`,
 
   rsvpReminderJune: `Hello {firstName}, it’s Sebastian & Allegra!
 
   Our wedding is only 70 days away!
 
-  If you need to update your previous RSVP response, or have yet to RSVP, please be sure to do so no later than July 31st, so that we can provide final numbers in the required timeframe for our vendors.
+  If you need to update your previous RSVP response, or have yet to RSVP, please be sure to do so no later than August 10th, so that we can provide final numbers in the required timeframe for our vendors.
 
   For additional information regarding hotel blocks and F.A.Qs, please visit our wedding website at www.allegrasebwedding.com.
 
@@ -31,7 +35,7 @@ const templates = {
 
   The deadline to RSVP to our wedding is 2 weeks away!
 
-  If you need to update your previous RSVP response, or have yet to RSVP, please be sure to do so no later than July 31st, so that we can provide final numbers in the required timeframe for our vendors.
+  If you need to update your previous RSVP response, or have yet to RSVP, please be sure to do so no later than August 10th, so that we can provide final numbers in the required timeframe for our vendors.
 
   For additional information regarding hotel blocks and local activities, please visit our wedding website at www.allegrasebwedding.com.
 
