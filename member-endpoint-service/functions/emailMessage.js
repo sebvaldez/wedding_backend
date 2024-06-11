@@ -57,7 +57,7 @@ const emailMessageLogic = async (event) => {
     const msg = {
       to: email,
       from: process.env.SENDGRID_SENDER_EMAIL,
-      subject: 'Wedding Site RSVP Test Email',
+      subject: 'RSVP to the Ceseña-Valdez Wedding!',
       html: personalizedHtmlTemplate,
     };
 
